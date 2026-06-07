@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import connectDB from './config/db.js'
+import authRoutes from './routes/authRoutes.js'
 
 dotenv.config()
 
@@ -18,6 +19,11 @@ const startServer = async () => {
     app.use(express.json({ limit: '10mb' }))
     app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
+    // Routes — baad mein add hote jayenge
+
+    // app.use('/api/auth', authRoutes)
+    app.use('/api/auth', authRoutes)
+
     app.get('/health', (req, res) => {
       res.status(200).json({
         status: 'ok',
@@ -26,12 +32,12 @@ const startServer = async () => {
       })
     })
 
-    //404 handler if frontend req to undefined api
+    // 404 handler
     app.use((req, res) => {
       res.status(404).json({ success: false, message: 'Route not found' })
     })
 
-    //This is an Express error-handling middleware — one of the most important parts of a backend.
+    // Global error handler
     app.use((err, req, res, next) => {
       console.error(err.stack)
       res.status(err.status || 500).json({
@@ -41,10 +47,28 @@ const startServer = async () => {
     })
 
     const PORT = process.env.PORT || 5000
-    //for docker we have to write the 0.0.0.0 other we skip that
-    app.listen(PORT, '0.0.0.0', () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT} ✓`)
     })
+
+    // Docker graceful shutdown — SIGTERM Docker bhejta hai container stop karte waqt
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received — shutting down gracefully')
+      server.close(() => {
+        console.log('Server closed ✓')
+        process.exit(0)
+      })
+    })
+
+    // Ctrl+C se local development mein
+    process.on('SIGINT', () => {
+      console.log('SIGINT received — shutting down gracefully')
+      server.close(() => {
+        console.log('Server closed ✓')
+        process.exit(0)
+      })
+    })
+
   } catch (error) {
     console.error('Server startup failed:', error.message)
     process.exit(1)
