@@ -23,10 +23,31 @@ const userSchema = new mongoose.Schema(
       originalName: String,
       extractedText: String,
       parsedData: {
+        name: String,
+        email: String,
+        phone: String,
         skills: [String],
-        experience: [String],
-        projects: [String],
-        education: [String],
+        experience: [
+          {
+            company: String,
+            role: String,
+            duration: String,
+          }
+        ],
+        projects: [
+          {
+            name: String,
+            description: String,
+            technologies: [String],
+          }
+        ],
+        education: [
+          {
+            degree: String,
+            institution: String,
+            year: String,
+          }
+        ],
       },
       uploadedAt: Date,
     },
