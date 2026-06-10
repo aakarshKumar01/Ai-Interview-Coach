@@ -6,7 +6,7 @@ const parseResumeWithAI = async (resumeText) => {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
   const completion = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+    model: 'llama-3.3-70b-versatile', // tell the groq which ai model to use
     messages: [
       {
         role: 'system',
@@ -19,8 +19,8 @@ const parseResumeWithAI = async (resumeText) => {
         Resume:
         ${resumeText}`,
       },
-    ],
-    temperature: 0.1,
+    ], // this message format is used to instruct the ai model first one is for what role it should perform and what task is to perform is define in second
+    temperature: 0.1,//how predicatable a model 1 , 1.5 , 2
   })
 
   const raw = completion.choices[0].message.content.trim()
@@ -72,7 +72,7 @@ export const uploadResume = async (req, res) => {
           uploadedAt: new Date(),
         },
       },
-      { returnDocument: 'after' }  
+      { new : 'true' }  
     ).select('-password')
 
     res.status(200).json({
