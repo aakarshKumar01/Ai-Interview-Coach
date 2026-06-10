@@ -5,6 +5,7 @@ import cors from 'cors'
 import connectDB from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import resumeRoutes from './routes/resumeRoutes.js'
+import sessionRoutes from './routes/sessionRoutes.js'
 
 
 const startServer = async () => {
@@ -25,6 +26,7 @@ const startServer = async () => {
     // app.use('/api/auth', authRoutes)
     app.use('/api/auth', authRoutes)
     app.use('/api/resume', resumeRoutes)
+    app.use('/api/sessions', sessionRoutes)
 
     app.get('/health', (req, res) => {
       res.status(200).json({

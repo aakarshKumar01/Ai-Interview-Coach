@@ -1,15 +1,22 @@
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import ResumeUpload from '../components/ResumeUpload'
 
 const Dashboard = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showUpload, setShowUpload] = useState(false)
 
   const handleLogout = () => {
     logout()
     navigate('/login')
+  }
+
+  const handleUploadSuccess = () => {
+    setShowUpload(false)
+    window.location.reload()
   }
 
   const interviewTypes = [
@@ -109,7 +116,7 @@ const Dashboard = () => {
         </div>
 
         {/* Resume banner */}
-        {!user?.resume?.originalName && (
+        {!user?.resume?.originalName ? (
           <div className="bg-teal-500/10 border border-teal-500/20 rounded-2xl p-5 mb-10 flex items-center justify-between">
             <div>
               <p className="text-teal-400 font-medium text-sm">Upload your resume</p>
@@ -117,8 +124,29 @@ const Dashboard = () => {
                 AI will generate personalized questions from your resume
               </p>
             </div>
-            <button className="bg-teal-500 hover:bg-teal-400 text-black text-sm font-semibold px-4 py-2 rounded-xl transition-all">
+            <button
+              onClick={() => setShowUpload(true)}
+              className="bg-teal-500 hover:bg-teal-400 text-black text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+            >
               Upload PDF →
+            </button>
+          </div>
+        ) : (
+          <div className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-5 mb-10 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📄</span>
+              <div>
+                <p className="text-white text-sm font-medium">{user.resume.originalName}</p>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  Uploaded · AI parsed ✓
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowUpload(true)}
+              className="text-teal-400 hover:text-teal-300 text-sm transition-all border border-teal-500/30 px-3 py-1.5 rounded-lg"
+            >
+              Replace
             </button>
           </div>
         )}
@@ -161,6 +189,15 @@ const Dashboard = () => {
         </div>
 
       </div>
+
+      {/* Resume Upload Modal */}
+      {showUpload && (
+        <ResumeUpload
+          onUploadSuccess={handleUploadSuccess}
+          onClose={() => setShowUpload(false)}
+        />
+      )}
+
     </div>
   )
 }
