@@ -26,6 +26,7 @@ const Dashboard = () => {
       desc: 'Behavioral & situational questions',
       tag: 'Beginner Friendly',
       tagColor: 'text-teal-400 bg-teal-400/10',
+      route: 'hr',
     },
     {
       icon: '⚙️',
@@ -33,6 +34,7 @@ const Dashboard = () => {
       desc: 'DSA, system design & coding',
       tag: 'Most Popular',
       tagColor: 'text-yellow-400 bg-yellow-400/10',
+      route: 'technical',
     },
     {
       icon: '🎯',
@@ -40,6 +42,7 @@ const Dashboard = () => {
       desc: 'HR + Technical combined',
       tag: 'Recommended',
       tagColor: 'text-purple-400 bg-purple-400/10',
+      route: 'mixed',
     },
     {
       icon: '💻',
@@ -47,6 +50,7 @@ const Dashboard = () => {
       desc: 'Live DSA problem solving',
       tag: 'Advanced',
       tagColor: 'text-red-400 bg-red-400/10',
+      route: 'coding',
     },
   ]
 
@@ -137,9 +141,7 @@ const Dashboard = () => {
               <span className="text-2xl">📄</span>
               <div>
                 <p className="text-white text-sm font-medium">{user.resume.originalName}</p>
-                <p className="text-gray-500 text-xs mt-0.5">
-                  Uploaded · AI parsed ✓
-                </p>
+                <p className="text-gray-500 text-xs mt-0.5">Uploaded · AI parsed ✓</p>
               </div>
             </div>
             <button
@@ -159,6 +161,7 @@ const Dashboard = () => {
           {interviewTypes.map((type, i) => (
             <div
               key={i}
+              onClick={() => navigate(`/interview/${type.route}`)}
               className="bg-[#111] border border-[#1a1a1a] hover:border-teal-500/50 rounded-2xl p-6 cursor-pointer transition-all group"
             >
               <div className="flex items-start justify-between mb-3">
@@ -170,7 +173,7 @@ const Dashboard = () => {
               <h3 className="text-white font-semibold mb-1">{type.title}</h3>
               <p className="text-gray-500 text-sm">{type.desc}</p>
               <div className="mt-4 flex items-center gap-2 text-teal-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all">
-                Start Interview <span>→</span>
+                Start Interview →
               </div>
             </div>
           ))}
