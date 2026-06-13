@@ -4,6 +4,9 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Interview from './pages/Interview'
+import Feedback from './pages/Feedback'
+import ATSChecker from './pages/ATSChecker'
+import Progress from './pages/Progress'
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
@@ -34,6 +37,21 @@ const App = () => {
           <Route path="/interview/:type" element={
             <ProtectedRoute>
               <Interview />
+            </ProtectedRoute>
+          } />
+          <Route path="/feedback/:id" element={
+            <ProtectedRoute>
+              <Feedback />
+            </ProtectedRoute>
+          } />
+          <Route path="/ats-checker" element={
+            <ProtectedRoute>
+              <ATSChecker />
+            </ProtectedRoute>
+          } />
+          <Route path="/progress" element={
+            <ProtectedRoute>
+              <Progress />
             </ProtectedRoute>
           } />
           <Route path="/" element={<Navigate to="/login" />} />

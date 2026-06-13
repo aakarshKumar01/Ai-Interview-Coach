@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import VoiceRecorder from '../components/VoiceRecorder'
 import api from '../utils/api'
 
 const Interview = () => {
@@ -13,16 +14,29 @@ const Interview = () => {
   const [starting, setStarting] = useState(false)
   const [questionsAsked, setQuestionsAsked] = useState(0)
   const [totalQuestions, setTotalQuestions] = useState(5)
-  const [completed, setCompleted] = useState(false)
   const [difficulty, setDifficulty] = useState('medium')
   const [started, setStarted] = useState(false)
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
 
   const bottomRef = useRef(null)
 
-  // Auto scroll to bottom
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  // AI message speak karo
+  const speakMessage = (text) => {
+    if (!('speechSynthesis' in window) || !voiceEnabled) return
+    window.speechSynthesis.cancel()
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 0.9
+    utterance.pitch = 1
+    utterance.volume = 1
+    const voices = window.speechSynthesis.getVoices()
+    const englishVoice = voices.find(v => v.lang.startsWith('en'))
+    if (englishVoice) utterance.voice = englishVoice
+    window.speechSynthesis.speak(utterance)
+  }
 
   const startInterview = async () => {
     setStarting(true)
@@ -36,6 +50,7 @@ const Interview = () => {
       setMessages(data.session.messages)
       setQuestionsAsked(data.session.questionsAsked)
       setStarted(true)
+      speakMessage(data.session.messages[0].content)
     } catch (err) {
       console.error(err)
     } finally {
@@ -51,7 +66,6 @@ const Interview = () => {
     setAnswer('')
     setLoading(true)
 
-    // User message turant show karo
     setMessages(prev => [...prev, {
       role: 'user',
       content: userAnswer,
@@ -64,7 +78,6 @@ const Interview = () => {
       })
 
       if (data.completed) {
-        setCompleted(true)
         navigate(`/feedback/${sessionId}`)
       } else {
         setMessages(prev => [...prev, {
@@ -73,6 +86,7 @@ const Interview = () => {
           timestamp: new Date(),
         }])
         setQuestionsAsked(data.questionsAsked)
+        speakMessage(data.message)
       }
     } catch (err) {
       console.error(err)
@@ -186,9 +200,25 @@ const Interview = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
+          {/* Voice toggle */}
+          <button
+            onClick={() => {
+              setVoiceEnabled(!voiceEnabled)
+              window.speechSynthesis.cancel()
+            }}
+            className={`text-sm px-3 py-1.5 rounded-lg border transition-all ${
+              voiceEnabled
+                ? 'border-teal-500/50 text-teal-400'
+                : 'border-[#2a2a2a] text-gray-600'
+            }`}
+          >
+            {voiceEnabled ? '🔊 Voice On' : '🔇 Voice Off'}
+          </button>
+
           <span className="text-gray-500 text-sm">
             {questionsAsked} / {totalQuestions} questions
           </span>
+
           {/* Progress bar */}
           <div className="w-24 h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
             <div
@@ -258,17 +288,23 @@ const Interview = () => {
                 handleSubmit(e)
               }
             }}
-            placeholder="Type your answer... (Enter to send, Shift+Enter for new line)"
+            placeholder="Type your answer or use mic... (Enter to send, Shift+Enter for new line)"
             rows={2}
             className="flex-1 bg-[#111] border border-[#1a1a1a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 resize-none transition-all"
           />
-          <button
-            type="submit"
-            disabled={!answer.trim() || loading}
-            className="bg-teal-500 hover:bg-teal-400 disabled:bg-teal-800 disabled:cursor-not-allowed text-black font-semibold px-6 rounded-xl transition-all"
-          >
-            Send
-          </button>
+          <div className="flex flex-col gap-2">
+            <VoiceRecorder
+              onTranscript={(text) => setAnswer(prev => prev + ' ' + text)}
+              disabled={loading}
+            />
+            <button
+              type="submit"
+              disabled={!answer.trim() || loading}
+              className="bg-teal-500 hover:bg-teal-400 disabled:bg-teal-800 disabled:cursor-not-allowed text-black font-semibold px-6 rounded-xl transition-all flex-1"
+            >
+              Send
+            </button>
+          </div>
         </form>
       </div>
 

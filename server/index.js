@@ -6,6 +6,9 @@ import connectDB from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import resumeRoutes from './routes/resumeRoutes.js'
 import sessionRoutes from './routes/sessionRoutes.js'
+import feedbackRoutes from './routes/feedbackRoutes.js'
+import statsRoutes from './routes/statsRoutes.js'
+import atsRoutes from './routes/atsRoutes.js'
 
 
 const startServer = async () => {
@@ -27,6 +30,9 @@ const startServer = async () => {
     app.use('/api/auth', authRoutes)
     app.use('/api/resume', resumeRoutes)
     app.use('/api/sessions', sessionRoutes)
+    app.use('/api/feedback', feedbackRoutes)
+    app.use('/api/stats', statsRoutes)
+    app.use('/api/ats', atsRoutes)
 
     app.get('/health', (req, res) => {
       res.status(200).json({

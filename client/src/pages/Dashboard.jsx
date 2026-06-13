@@ -1,13 +1,36 @@
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ResumeUpload from '../components/ResumeUpload'
+import Navbar from '../components/Navbar'
+import api from '../utils/api'
 
 const Dashboard = () => {
+
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
+  
+  const [stats, setStats] = useState({
+    totalInterviews: 0,
+    avgScore: null,
+    weakTopics: [],
+    recentSessions: [],
+  })
+
+  useEffect(() => {
+    fetchStats()
+  }, [])
+
+  const fetchStats = async () => {
+    try {
+      const { data } = await api.get('/stats')
+      setStats(data.stats)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   const handleLogout = () => {
     logout()
@@ -54,48 +77,17 @@ const Dashboard = () => {
     },
   ]
 
-  const stats = [
-    { label: 'Interviews Done', value: '0', icon: '🎤' },
-    { label: 'Avg Score', value: '--', icon: '📊' },
-    { label: 'Weak Topics', value: '--', icon: '📌' },
+  const statCards = [
+    { label: 'Interviews Done', value: stats.totalInterviews, icon: '🎤' },
+    { label: 'Avg Score', value: stats.avgScore ? `${stats.avgScore}/10` : '--', icon: '📊' },
+    { label: 'Weak Topics', value: stats.weakTopics.length > 0 ? stats.weakTopics.length : '--', icon: '📌' },
     { label: 'Current Streak', value: '0 days', icon: '🔥' },
   ]
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
 
-      {/* Navbar */}
-      <nav className="border-b border-[#1a1a1a] px-6 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold tracking-tight">AI Interview Coach</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-400 text-sm hidden md:block">
-            {user?.resume?.originalName ? '📄 Resume uploaded' : '⚠️ No resume'}
-          </span>
-          <div className="relative">
-            <button
-              onClick={() => setShowDropdown(!showDropdown)}
-              className="flex items-center gap-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2 text-sm hover:border-teal-500 transition-all"
-            >
-              <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center text-black text-xs font-bold">
-                {user?.name?.charAt(0).toUpperCase()}
-              </div>
-              {user?.name}
-              <span className="text-gray-500">▾</span>
-            </button>
-            {showDropdown && (
-              <div className="absolute right-0 mt-2 w-40 bg-[#111] border border-[#222] rounded-xl overflow-hidden z-10">
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#1a1a1a] transition-all"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
+     < Navbar />
       <div className="max-w-6xl mx-auto px-6 py-10">
 
         {/* Welcome */}
@@ -110,7 +102,7 @@ const Dashboard = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-          {stats.map((stat, i) => (
+          {statCards.map((stat, i) => (
             <div key={i} className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-5">
               <p className="text-2xl mb-1">{stat.icon}</p>
               <p className="text-xl font-semibold">{stat.value}</p>
@@ -153,6 +145,25 @@ const Dashboard = () => {
           </div>
         )}
 
+        {/* ATS Checker Card */}
+        <div
+          onClick={() => navigate('/ats-checker')}
+          className="bg-[#111] border border-[#1a1a1a] hover:border-purple-500/50 rounded-2xl p-5 mb-10 flex items-center justify-between cursor-pointer transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📄</span>
+            <div>
+              <p className="text-white text-sm font-medium">ATS Resume Checker</p>
+              <p className="text-gray-500 text-xs mt-0.5">
+                Check how well your resume matches any job description
+              </p>
+            </div>
+          </div>
+          <span className="text-purple-400 text-sm opacity-0 group-hover:opacity-100 transition-all">
+            Check now →
+          </span>
+        </div>
+
         {/* Interview types */}
         <p className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">
           Choose Interview Type
@@ -180,17 +191,55 @@ const Dashboard = () => {
         </div>
 
         {/* Recent sessions */}
-        <p className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">
-          Recent Sessions
-        </p>
-        <div className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-10 text-center">
-          <p className="text-4xl mb-3">🎤</p>
-          <p className="text-gray-400 text-sm">No interviews yet</p>
-          <p className="text-gray-600 text-xs mt-1">
-            Start your first interview to see results here
-          </p>
+        {/* Recent sessions */}
+<p className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">
+  Recent Sessions
+</p>
+{stats.recentSessions.length === 0 ? (
+  <div className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-10 text-center">
+    <p className="text-4xl mb-3">🎤</p>
+    <p className="text-gray-400 text-sm">No interviews yet</p>
+    <p className="text-gray-600 text-xs mt-1">
+      Start your first interview to see results here
+    </p>
+  </div>
+) : (
+  <div className="flex flex-col gap-3">
+    {stats.recentSessions.map((session, i) => (
+      <div
+        key={i}
+        onClick={() => navigate(`/feedback/${session.id}`)}
+        className="bg-[#111] border border-[#1a1a1a] hover:border-teal-500/50 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-xl">
+            {session.type === 'hr' ? '💼' : session.type === 'technical' ? '⚙️' : session.type === 'mixed' ? '🎯' : '💻'}
+          </span>
+          <div>
+            <p className="text-white text-sm font-medium capitalize">{session.type} Interview</p>
+            <p className="text-gray-500 text-xs mt-0.5">
+              {new Date(session.date).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
+            </p>
+          </div>
         </div>
-
+        <div className="flex items-center gap-3">
+          <span className={`text-sm font-semibold ${
+            session.score >= 8 ? 'text-teal-400' :
+            session.score >= 6 ? 'text-yellow-400' : 'text-red-400'
+          }`}>
+            {session.score ? `${session.score}/10` : '--'}
+          </span>
+                  <span className="text-gray-600 text-xs capitalize">{session.difficulty}</span>
+                  <span className="text-gray-600">→</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Resume Upload Modal */}
