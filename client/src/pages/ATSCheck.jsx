@@ -1,22 +1,49 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import api from '../utils/api'
 
-const ATSChecker = () => {
-  const navigate = useNavigate()
+const ATSCheck = () => {
+  const [file, setFile] = useState(null)
   const [jobDescription, setJobDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
+  const [dragOver, setDragOver] = useState(false)
+
+  const handleFileChange = (e) => {
+    const selected = e.target.files[0]
+    if (selected && selected.type === 'application/pdf') {
+      setFile(selected)
+      setError('')
+    } else {
+      setError('Only PDF files are allowed')
+    }
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setDragOver(false)
+    const dropped = e.dataTransfer.files[0]
+    if (dropped && dropped.type === 'application/pdf') {
+      setFile(dropped)
+      setError('')
+    } else {
+      setError('Only PDF files are allowed')
+    }
+  }
 
   const handleCheck = async () => {
-    if (!jobDescription.trim()) return
+    if (!file || !jobDescription.trim()) return
     setLoading(true)
     setError('')
     setResult(null)
     try {
-      const { data } = await api.post('/ats/check', { jobDescription })
+      const formData = new FormData()
+      formData.append('resume', file)
+      formData.append('jobDescription', jobDescription)
+      const { data } = await api.post('/ats/quick-check', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
       setResult(data.result)
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to analyze resume')
@@ -55,17 +82,55 @@ const ATSChecker = () => {
 
       <div className="max-w-4xl mx-auto px-6 py-10">
 
-        {/* Intro */}
         <div className="mb-8 animate-fade-in-up">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Check your resume against any job</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Quick ATS Check</h2>
           <p className="text-gray-500 text-sm">
-            Paste a job description below — we'll analyze your uploaded resume against it,
-            give you an ATS match score, and tell you exactly what to fix.
+            Upload any resume (PDF) and a job description — get an instant ATS match score.
+            No account resume needed.
           </p>
         </div>
 
-        {/* JD Input */}
+        {/* Upload area */}
         <div className="animate-fade-in-up bg-white border border-gray-100 shadow-sm rounded-2xl p-6 mb-6">
+
+          <label className="text-gray-600 text-sm mb-2 block font-medium">Resume (PDF)</label>
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            onClick={() => document.getElementById('atsResumeInput').click()}
+            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all mb-5 ${
+              dragOver
+                ? 'border-emerald-400 bg-emerald-50'
+                : file
+                ? 'border-emerald-300 bg-emerald-50/50'
+                : 'border-gray-200 hover:border-emerald-300 bg-gray-50/50'
+            }`}
+          >
+            <input
+              id="atsResumeInput"
+              type="file"
+              accept=".pdf"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            {file ? (
+              <>
+                <p className="text-3xl mb-2">📄</p>
+                <p className="text-gray-900 text-sm font-medium">{file.name}</p>
+                <p className="text-gray-500 text-xs mt-1">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB — click to change
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-3xl mb-2">📁</p>
+                <p className="text-gray-600 text-sm">Drag & drop your resume PDF here</p>
+                <p className="text-gray-400 text-xs mt-1">or click to browse</p>
+              </>
+            )}
+          </div>
+
           <label className="text-gray-600 text-sm mb-2 block font-medium">Job Description</label>
           <textarea
             value={jobDescription}
@@ -74,9 +139,10 @@ const ATSChecker = () => {
             rows={8}
             className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none transition-all"
           />
+
           <button
             onClick={handleCheck}
-            disabled={!jobDescription.trim() || loading}
+            disabled={!file || !jobDescription.trim() || loading}
             className="mt-4 w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-200 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl text-sm transition-all shadow-sm"
           >
             {loading ? (
@@ -99,7 +165,7 @@ const ATSChecker = () => {
           <div className="space-y-6">
 
             {/* Score */}
-            <div className={`animate-fade-in-up border rounded-2xl p-8 text-center shadow-sm ${getScoreBg(result.atsScore)}`}>
+            <div className={`animate-fade-in-up border rounded-2xl p-8 text-center ${getScoreBg(result.atsScore)}`}>
               <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-medium">ATS Match Score</p>
               <p className={`text-6xl font-bold ${getScoreColor(result.atsScore)}`}>
                 {result.atsScore}
@@ -124,7 +190,6 @@ const ATSChecker = () => {
 
             {/* Keywords */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
               <div className="animate-fade-in-up bg-white border border-gray-100 shadow-sm rounded-2xl p-6">
                 <p className="text-emerald-600 text-xs uppercase tracking-wider mb-4 font-medium">
                   ✓ Matched Keywords ({result.matchedKeywords?.length || 0})
@@ -156,7 +221,6 @@ const ATSChecker = () => {
                   )}
                 </div>
               </div>
-
             </div>
 
             {/* Format Issues */}
@@ -210,4 +274,4 @@ const ATSChecker = () => {
   )
 }
 
-export default ATSChecker
+export default ATSCheck

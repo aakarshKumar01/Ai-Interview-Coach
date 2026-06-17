@@ -6,12 +6,9 @@ import Navbar from '../components/Navbar'
 import api from '../utils/api'
 
 const Dashboard = () => {
-
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
-  const [showDropdown, setShowDropdown] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
-  
   const [stats, setStats] = useState({
     totalInterviews: 0,
     avgScore: null,
@@ -32,224 +29,158 @@ const Dashboard = () => {
     }
   }
 
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
-
   const handleUploadSuccess = () => {
     setShowUpload(false)
     window.location.reload()
   }
 
-  const interviewTypes = [
-    {
-      icon: '💼',
-      title: 'HR Interview',
-      desc: 'Behavioral & situational questions',
-      tag: 'Beginner Friendly',
-      tagColor: 'text-teal-400 bg-teal-400/10',
-      route: 'hr',
-    },
-    {
-      icon: '⚙️',
-      title: 'Technical Interview',
-      desc: 'DSA, system design & coding',
-      tag: 'Most Popular',
-      tagColor: 'text-yellow-400 bg-yellow-400/10',
-      route: 'technical',
-    },
-    {
-      icon: '🎯',
-      title: 'Mixed Interview',
-      desc: 'HR + Technical combined',
-      tag: 'Recommended',
-      tagColor: 'text-purple-400 bg-purple-400/10',
-      route: 'mixed',
-    },
-    {
-      icon: '💻',
-      title: 'Coding Round',
-      desc: 'Live DSA problem solving',
-      tag: 'Advanced',
-      tagColor: 'text-red-400 bg-red-400/10',
-      route: 'coding',
-    },
-  ]
-
-  const statCards = [
-    { label: 'Interviews Done', value: stats.totalInterviews, icon: '🎤' },
-    { label: 'Avg Score', value: stats.avgScore ? `${stats.avgScore}/10` : '--', icon: '📊' },
-    { label: 'Weak Topics', value: stats.weakTopics.length > 0 ? stats.weakTopics.length : '--', icon: '📌' },
-    { label: 'Current Streak', value: '0 days', icon: '🔥' },
-  ]
-
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen text-gray-900" style={{ background: '#F0E0C8' }}>
+      <Navbar />
 
-     < Navbar />
       <div className="max-w-6xl mx-auto px-6 py-10">
 
         {/* Welcome */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-semibold">
-            Welcome back, {user?.name?.split(' ')[0]} 👋
+        <div className="mb-10 animate-fade-in-up">
+          <h2 className="text-3xl font-bold text-gray-900">
+            Welcome back, <span className="gradient-text-light">{user?.name?.split(' ')[0]}</span> 👋
           </h2>
-          <p className="text-gray-500 mt-1 text-sm">
-            Ready to practice today? Pick an interview type to get started.
+          <p className="text-gray-500 mt-2 text-sm">
+            Ready to practice today? Head to Practice Hub to get started.
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-          {statCards.map((stat, i) => (
-            <div key={i} className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-5">
-              <p className="text-2xl mb-1">{stat.icon}</p>
-              <p className="text-xl font-semibold">{stat.value}</p>
-              <p className="text-gray-500 text-xs mt-1">{stat.label}</p>
-            </div>
-          ))}
+          <div className="animate-fade-in-up delay-100 card-hover bg-white border border-orange-100 rounded-2xl p-5 shadow-sm">
+            <p className="text-2xl mb-1">🎤</p>
+            <p className="text-xl font-semibold text-orange-500">{stats.totalInterviews}</p>
+            <p className="text-gray-500 text-xs mt-1">Interviews Done</p>
+          </div>
+          <div className="animate-fade-in-up delay-200 card-hover bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm">
+            <p className="text-2xl mb-1">📊</p>
+            <p className="text-xl font-semibold text-emerald-600">{stats.avgScore ? `${stats.avgScore}/10` : '--'}</p>
+            <p className="text-gray-500 text-xs mt-1">Avg Score</p>
+          </div>
+          <div className="animate-fade-in-up delay-300 card-hover bg-white border border-rose-100 rounded-2xl p-5 shadow-sm">
+            <p className="text-2xl mb-1">📌</p>
+            <p className="text-xl font-semibold text-rose-500">{stats.weakTopics.length > 0 ? stats.weakTopics.length : '--'}</p>
+            <p className="text-gray-500 text-xs mt-1">Weak Topics</p>
+          </div>
+          <div className="animate-fade-in-up delay-400 card-hover bg-white border border-amber-100 rounded-2xl p-5 shadow-sm">
+            <p className="text-2xl mb-1">🔥</p>
+            <p className="text-xl font-semibold text-amber-500">0 days</p>
+            <p className="text-gray-500 text-xs mt-1">Current Streak</p>
+          </div>
         </div>
 
         {/* Resume banner */}
         {!user?.resume?.originalName ? (
-          <div className="bg-teal-500/10 border border-teal-500/20 rounded-2xl p-5 mb-10 flex items-center justify-between">
+          <div className="animate-fade-in-up card-hover bg-emerald-50 border border-emerald-100 rounded-2xl p-5 mb-10 flex items-center justify-between shadow-sm">
             <div>
-              <p className="text-teal-400 font-medium text-sm">Upload your resume</p>
+              <p className="text-emerald-700 font-medium text-sm">Upload your resume</p>
               <p className="text-gray-500 text-xs mt-1">
                 AI will generate personalized questions from your resume
               </p>
             </div>
             <button
               onClick={() => setShowUpload(true)}
-              className="bg-teal-500 hover:bg-teal-400 text-black text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+              className="animate-pulse-glow bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-sm"
             >
               Upload PDF →
             </button>
           </div>
         ) : (
-          <div className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-5 mb-10 flex items-center justify-between">
+          <div className="animate-fade-in-up card-hover bg-white border border-gray-100 shadow-sm rounded-2xl p-5 mb-10 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-2xl">📄</span>
               <div>
-                <p className="text-white text-sm font-medium">{user.resume.originalName}</p>
+                <p className="text-gray-900 text-sm font-medium">{user.resume.originalName}</p>
                 <p className="text-gray-500 text-xs mt-0.5">Uploaded · AI parsed ✓</p>
               </div>
             </div>
             <button
               onClick={() => setShowUpload(true)}
-              className="text-teal-400 hover:text-teal-300 text-sm transition-all border border-teal-500/30 px-3 py-1.5 rounded-lg"
+              className="text-emerald-600 hover:text-emerald-700 text-sm transition-all border border-emerald-200 hover:border-emerald-300 px-3 py-1.5 rounded-lg"
             >
               Replace
             </button>
           </div>
         )}
 
-        {/* ATS Checker Card */}
+        {/* Quick CTA */}
         <div
-          onClick={() => navigate('/ats-checker')}
-          className="bg-[#111] border border-[#1a1a1a] hover:border-purple-500/50 rounded-2xl p-5 mb-10 flex items-center justify-between cursor-pointer transition-all group"
+          onClick={() => navigate('/practice')}
+          className="animate-fade-in-up animate-pulse-glow card-hover relative overflow-hidden bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 hover:border-emerald-400 rounded-2xl p-6 mb-10 flex items-center justify-between cursor-pointer transition-all group shadow-sm"
         >
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">📄</span>
-            <div>
-              <p className="text-white text-sm font-medium">ATS Resume Checker</p>
-              <p className="text-gray-500 text-xs mt-0.5">
-                Check how well your resume matches any job description
-              </p>
-            </div>
-          </div>
-          <span className="text-purple-400 text-sm opacity-0 group-hover:opacity-100 transition-all">
-            Check now →
-          </span>
-        </div>
-
-        {/* Interview types */}
-        <p className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">
-          Choose Interview Type
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-          {interviewTypes.map((type, i) => (
-            <div
-              key={i}
-              onClick={() => navigate(`/interview/${type.route}`)}
-              className="bg-[#111] border border-[#1a1a1a] hover:border-teal-500/50 rounded-2xl p-6 cursor-pointer transition-all group"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-3xl">{type.icon}</span>
-                <span className={`text-xs px-2 py-1 rounded-lg font-medium ${type.tagColor}`}>
-                  {type.tag}
-                </span>
-              </div>
-              <h3 className="text-white font-semibold mb-1">{type.title}</h3>
-              <p className="text-gray-500 text-sm">{type.desc}</p>
-              <div className="mt-4 flex items-center gap-2 text-teal-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all">
-                Start Interview →
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Recent sessions */}
-        {/* Recent sessions */}
-<p className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">
-  Recent Sessions
-</p>
-{stats.recentSessions.length === 0 ? (
-  <div className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-10 text-center">
-    <p className="text-4xl mb-3">🎤</p>
-    <p className="text-gray-400 text-sm">No interviews yet</p>
-    <p className="text-gray-600 text-xs mt-1">
-      Start your first interview to see results here
-    </p>
-  </div>
-) : (
-  <div className="flex flex-col gap-3">
-    {stats.recentSessions.map((session, i) => (
-      <div
-        key={i}
-        onClick={() => navigate(`/feedback/${session.id}`)}
-        className="bg-[#111] border border-[#1a1a1a] hover:border-teal-500/50 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all"
-      >
-        <div className="flex items-center gap-3">
-          <span className="text-xl">
-            {session.type === 'hr' ? '💼' : session.type === 'technical' ? '⚙️' : session.type === 'mixed' ? '🎯' : '💻'}
-          </span>
           <div>
-            <p className="text-white text-sm font-medium capitalize">{session.type} Interview</p>
-            <p className="text-gray-500 text-xs mt-0.5">
-              {new Date(session.date).toLocaleDateString('en-IN', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              })}
+            <p className="text-gray-900 font-semibold text-lg">Ready for a mock interview?</p>
+            <p className="text-gray-500 text-sm mt-1">
+              Choose from HR, Technical, Mixed or Coding rounds
             </p>
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className={`text-sm font-semibold ${
-            session.score >= 8 ? 'text-teal-400' :
-            session.score >= 6 ? 'text-yellow-400' : 'text-red-400'
-          }`}>
-            {session.score ? `${session.score}/10` : '--'}
+          <span className="text-emerald-600 text-sm font-medium group-hover:translate-x-1 transition-transform inline-block">
+            Go to Practice Hub →
           </span>
-                  <span className="text-gray-600 text-xs capitalize">{session.difficulty}</span>
-                  <span className="text-gray-600">→</span>
+        </div>
+
+        {/* Recent sessions */}
+        <p className="text-gray-500 text-sm font-medium mb-4 uppercase tracking-wider animate-fade-in-up">
+          Recent Sessions
+        </p>
+        {stats.recentSessions.length === 0 ? (
+          <div className="animate-fade-in-up bg-white border border-gray-100 shadow-sm rounded-2xl p-10 text-center">
+            <p className="text-4xl mb-3">🎤</p>
+            <p className="text-gray-500 text-sm">No interviews yet</p>
+            <p className="text-gray-400 text-xs mt-1">
+              Start your first interview to see results here
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {stats.recentSessions.map((session, i) => (
+              <div
+                key={i}
+                onClick={() => navigate(`/feedback/${session.id}`)}
+                className="animate-fade-in-up card-hover bg-white border border-gray-100 hover:border-emerald-300 shadow-sm rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">
+                    {session.type === 'hr' ? '💼' : session.type === 'technical' ? '⚙️' : session.type === 'mixed' ? '🎯' : '💻'}
+                  </span>
+                  <div>
+                    <p className="text-gray-900 text-sm font-medium capitalize">{session.type} Interview</p>
+                    <p className="text-gray-500 text-xs mt-0.5">
+                      {new Date(session.date).toLocaleDateString('en-IN', {
+                        day: 'numeric', month: 'short', year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-sm font-semibold ${
+                    session.score >= 8 ? 'text-emerald-600' :
+                    session.score >= 6 ? 'text-amber-500' : 'text-red-500'
+                  }`}>
+                    {session.score ? `${session.score}/10` : '--'}
+                  </span>
+                  <span className="text-gray-400 text-xs capitalize">{session.difficulty}</span>
+                  <span className="text-gray-400">→</span>
                 </div>
               </div>
             ))}
           </div>
         )}
+
       </div>
 
-      {/* Resume Upload Modal */}
       {showUpload && (
         <ResumeUpload
           onUploadSuccess={handleUploadSuccess}
           onClose={() => setShowUpload(false)}
         />
       )}
-
     </div>
   )
 }

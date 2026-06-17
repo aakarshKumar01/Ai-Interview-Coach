@@ -33,6 +33,7 @@ const startServer = async () => {
     app.use('/api/feedback', feedbackRoutes)
     app.use('/api/stats', statsRoutes)
     app.use('/api/ats', atsRoutes)
+    app.use('/api/quick-check', atsRoutes)
 
     app.get('/health', (req, res) => {
       res.status(200).json({

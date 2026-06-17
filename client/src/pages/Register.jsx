@@ -27,43 +27,40 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#F0E0C8' }}>
+      <div className="relative w-full max-w-md animate-fade-in-up">
 
-      {/* Subtle glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl opacity-5"></div>
-      </div>
-
-      <div className="relative w-full max-w-md">
-
-        {/* Logo */}
         <div className="text-center mb-10">
-          <h1 className="text-2xl font-bold text-white tracking-tight">
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{
+              background: 'linear-gradient(135deg, #059669, #f59e0b)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             AI Interview Coach
           </h1>
-          <p className="text-gray-500 mt-2 text-sm">
-            Practice. Improve. Get Hired.
+          <p className="text-gray-600 mt-2 text-sm">
+            Start your interview preparation today
           </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-[#111111] border border-[#222222] rounded-2xl p-8">
+        <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-8">
 
-          <h2 className="text-xl font-semibold text-white mb-1">Create Account</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-1">Create Account</h2>
           <p className="text-gray-500 text-sm mb-6">Start your interview preparation today</p>
 
-          {/* Error */}
           {error && (
-            <div className="mb-5 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2">
-              <span className="text-red-400 text-sm">⚠️ {error}</span>
+            <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2">
+              <span className="text-red-600 text-sm">⚠️ {error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Name */}
             <div>
-              <label className="text-gray-400 text-sm mb-1.5 block">
+              <label className="text-gray-600 text-sm mb-1.5 block font-medium">
                 Full Name
               </label>
               <input
@@ -72,13 +69,12 @@ const Register = () => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Aakarsh Kumar"
                 required
-                className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
               />
             </div>
 
-            {/* Email */}
             <div>
-              <label className="text-gray-400 text-sm mb-1.5 block">
+              <label className="text-gray-600 text-sm mb-1.5 block font-medium">
                 Email Address
               </label>
               <input
@@ -87,13 +83,12 @@ const Register = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label className="text-gray-400 text-sm mb-1.5 block">
+              <label className="text-gray-600 text-sm mb-1.5 block font-medium">
                 Password
               </label>
               <input
@@ -102,16 +97,15 @@ const Register = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all"
               />
-              <p className="text-gray-600 text-xs mt-1">Minimum 6 characters</p>
+              <p className="text-gray-400 text-xs mt-1">Minimum 6 characters</p>
             </div>
 
-            {/* Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-500 hover:bg-teal-400 disabled:bg-teal-800 disabled:cursor-not-allowed text-black font-semibold py-3 rounded-xl transition-all duration-200 text-sm mt-2"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-200 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-200 text-sm mt-2 shadow-sm"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -123,25 +117,24 @@ const Register = () => {
                 </span>
               ) : 'Create Account →'}
             </button>
-
           </form>
 
           <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-[#222]"></div>
-            <span className="text-gray-600 text-xs">or</span>
-            <div className="flex-1 h-px bg-[#222]"></div>
+            <div className="flex-1 h-px bg-gray-100"></div>
+            <span className="text-gray-400 text-xs">or</span>
+            <div className="flex-1 h-px bg-gray-100"></div>
           </div>
 
           <p className="text-center text-gray-500 text-sm">
             Already have an account?{' '}
-            <Link to="/login" className="text-teal-400 hover:text-teal-300 font-medium transition-colors">
+            <Link to="/login" className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
               Sign in
             </Link>
           </p>
 
         </div>
 
-        <p className="text-center text-gray-700 text-xs mt-6">
+        <p className="text-center text-gray-400 text-xs mt-6">
           AI Interview Coach © 2025
         </p>
 

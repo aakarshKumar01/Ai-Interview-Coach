@@ -58,7 +58,7 @@ const VoiceRecorder = ({ onTranscript, disabled }) => {
       className={`p-3 rounded-xl transition-all ${
         listening
           ? 'bg-red-500 hover:bg-red-400 text-white animate-pulse'
-          : 'bg-[#1a1a1a] border border-[#2a2a2a] text-gray-400 hover:border-teal-500 hover:text-teal-400'
+          : 'bg-gray-50 border border-gray-200 text-gray-500 hover:border-emerald-400 hover:text-emerald-600'
       } disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {listening ? (

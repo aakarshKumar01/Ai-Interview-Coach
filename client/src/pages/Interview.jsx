@@ -24,7 +24,6 @@ const Interview = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // AI message speak karo
   const speakMessage = (text) => {
     if (!('speechSynthesis' in window) || !voiceEnabled) return
     window.speechSynthesis.cancel()
@@ -105,29 +104,29 @@ const Interview = () => {
   // Pre-interview setup screen
   if (!started) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#F0E0C8' }}>
         <div className="w-full max-w-md">
 
           <button
-            onClick={() => navigate('/dashboard')}
-            className="text-gray-500 hover:text-white text-sm mb-8 flex items-center gap-2 transition-all"
+            onClick={() => navigate('/practice')}
+            className="text-gray-500 hover:text-gray-900 text-sm mb-6 flex items-center gap-2 transition-all"
           >
-            ← Back to Dashboard
+            ← Back to Practice Hub
           </button>
 
-          <div className="bg-[#111] border border-[#1a1a1a] rounded-2xl p-8">
+          <div className="animate-fade-in-up bg-white border border-gray-100 shadow-sm rounded-2xl p-8">
 
             <div className="text-center mb-8">
               <p className="text-4xl mb-3">
                 {type === 'hr' ? '💼' : type === 'technical' ? '⚙️' : type === 'mixed' ? '🎯' : '💻'}
               </p>
-              <h1 className="text-xl font-semibold text-white">{typeLabels[type]}</h1>
+              <h1 className="text-xl font-semibold text-gray-900">{typeLabels[type]}</h1>
               <p className="text-gray-500 text-sm mt-1">Configure your interview</p>
             </div>
 
             {/* Difficulty */}
             <div className="mb-6">
-              <p className="text-gray-400 text-sm mb-3">Difficulty</p>
+              <p className="text-gray-600 text-sm mb-3 font-medium">Difficulty</p>
               <div className="flex gap-3">
                 {['easy', 'medium', 'hard'].map(d => (
                   <button
@@ -135,8 +134,8 @@ const Interview = () => {
                     onClick={() => setDifficulty(d)}
                     className={`flex-1 py-2 rounded-xl text-sm font-medium capitalize transition-all ${
                       difficulty === d
-                        ? 'bg-teal-500 text-black'
-                        : 'bg-[#1a1a1a] text-gray-400 border border-[#2a2a2a] hover:border-teal-500/50'
+                        ? 'bg-emerald-500 text-white shadow-sm'
+                        : 'bg-gray-50 text-gray-500 border border-gray-200 hover:border-emerald-300'
                     }`}
                   >
                     {d}
@@ -147,7 +146,7 @@ const Interview = () => {
 
             {/* Questions count */}
             <div className="mb-8">
-              <p className="text-gray-400 text-sm mb-3">Number of Questions</p>
+              <p className="text-gray-600 text-sm mb-3 font-medium">Number of Questions</p>
               <div className="flex gap-3">
                 {[5, 10, 15].map(n => (
                   <button
@@ -155,8 +154,8 @@ const Interview = () => {
                     onClick={() => setTotalQuestions(n)}
                     className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all ${
                       totalQuestions === n
-                        ? 'bg-teal-500 text-black'
-                        : 'bg-[#1a1a1a] text-gray-400 border border-[#2a2a2a] hover:border-teal-500/50'
+                        ? 'bg-emerald-500 text-white shadow-sm'
+                        : 'bg-gray-50 text-gray-500 border border-gray-200 hover:border-emerald-300'
                     }`}
                   >
                     {n}
@@ -168,7 +167,7 @@ const Interview = () => {
             <button
               onClick={startInterview}
               disabled={starting}
-              className="w-full bg-teal-500 hover:bg-teal-400 disabled:bg-teal-800 text-black font-semibold py-3 rounded-xl transition-all"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-200 text-white font-semibold py-3 rounded-xl transition-all shadow-sm"
             >
               {starting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -189,13 +188,13 @@ const Interview = () => {
 
   // Interview screen
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: '#F0E0C8' }}>
 
       {/* Header */}
-      <div className="border-b border-[#1a1a1a] px-6 py-4 flex items-center justify-between">
+      <div className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
-          <h1 className="text-white font-semibold">{typeLabels[type]}</h1>
-          <span className="text-xs bg-teal-500/10 text-teal-400 px-2 py-1 rounded-lg capitalize">
+          <h1 className="text-gray-900 font-semibold">{typeLabels[type]}</h1>
+          <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg capitalize">
             {difficulty}
           </span>
         </div>
@@ -208,8 +207,8 @@ const Interview = () => {
             }}
             className={`text-sm px-3 py-1.5 rounded-lg border transition-all ${
               voiceEnabled
-                ? 'border-teal-500/50 text-teal-400'
-                : 'border-[#2a2a2a] text-gray-600'
+                ? 'border-emerald-300 text-emerald-700 bg-emerald-50'
+                : 'border-gray-200 text-gray-400'
             }`}
           >
             {voiceEnabled ? '🔊 Voice On' : '🔇 Voice Off'}
@@ -219,10 +218,9 @@ const Interview = () => {
             {questionsAsked} / {totalQuestions} questions
           </span>
 
-          {/* Progress bar */}
-          <div className="w-24 h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
+          <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-teal-500 rounded-full transition-all"
+              className="h-full bg-emerald-500 rounded-full transition-all"
               style={{ width: `${(questionsAsked / totalQuestions) * 100}%` }}
             />
           </div>
@@ -237,38 +235,37 @@ const Interview = () => {
             className={`flex mb-6 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             {msg.role === 'assistant' && (
-              <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-black text-xs font-bold mr-3 flex-shrink-0 mt-1">
+              <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 flex-shrink-0 mt-1">
                 AI
               </div>
             )}
             <div
-              className={`max-w-lg px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+              className={`max-w-lg px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-sm ${
                 msg.role === 'assistant'
-                  ? 'bg-[#111] border border-[#1a1a1a] text-white'
-                  : 'bg-teal-500 text-black'
+                  ? 'bg-white border border-gray-100 text-gray-900'
+                  : 'bg-emerald-500 text-white'
               }`}
             >
               {msg.content}
             </div>
             {msg.role === 'user' && (
-              <div className="w-8 h-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full flex items-center justify-center text-white text-xs font-bold ml-3 flex-shrink-0 mt-1">
+              <div className="w-8 h-8 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center text-gray-700 text-xs font-bold ml-3 flex-shrink-0 mt-1">
                 You
               </div>
             )}
           </div>
         ))}
 
-        {/* Loading indicator */}
         {loading && (
           <div className="flex justify-start mb-6">
-            <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-black text-xs font-bold mr-3 flex-shrink-0">
+            <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 flex-shrink-0">
               AI
             </div>
-            <div className="bg-[#111] border border-[#1a1a1a] px-4 py-3 rounded-2xl">
+            <div className="bg-white border border-gray-100 shadow-sm px-4 py-3 rounded-2xl">
               <div className="flex gap-1">
-                <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce delay-100"></div>
-                <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce delay-200"></div>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce delay-100"></div>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce delay-200"></div>
               </div>
             </div>
           </div>
@@ -277,7 +274,7 @@ const Interview = () => {
       </div>
 
       {/* Input */}
-      <div className="border-t border-[#1a1a1a] px-4 py-4">
+      <div className="bg-white border-t border-gray-100 px-4 py-4">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto flex gap-3">
           <textarea
             value={answer}
@@ -290,7 +287,7 @@ const Interview = () => {
             }}
             placeholder="Type your answer or use mic... (Enter to send, Shift+Enter for new line)"
             rows={2}
-            className="flex-1 bg-[#111] border border-[#1a1a1a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 resize-none transition-all"
+            className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none transition-all"
           />
           <div className="flex flex-col gap-2">
             <VoiceRecorder
@@ -300,7 +297,7 @@ const Interview = () => {
             <button
               type="submit"
               disabled={!answer.trim() || loading}
-              className="bg-teal-500 hover:bg-teal-400 disabled:bg-teal-800 disabled:cursor-not-allowed text-black font-semibold px-6 rounded-xl transition-all flex-1"
+              className="bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-200 disabled:cursor-not-allowed text-white font-semibold px-6 rounded-xl transition-all flex-1 shadow-sm"
             >
               Send
             </button>

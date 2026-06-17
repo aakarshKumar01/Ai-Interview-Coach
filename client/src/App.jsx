@@ -7,6 +7,13 @@ import Interview from './pages/Interview'
 import Feedback from './pages/Feedback'
 import ATSChecker from './pages/ATSChecker'
 import Progress from './pages/Progress'
+import Practice from './pages/Practice'
+import Resources from './pages/Resources'
+import ATSCheck from './pages/ATSCheck'
+import ForgotPassword from './pages/ForgotPassword'
+import VerifyOTP from './pages/VerifyOTP'
+import ResetPassword from './pages/ResetPassword'
+
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
@@ -29,6 +36,9 @@ const App = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
@@ -52,6 +62,21 @@ const App = () => {
           <Route path="/progress" element={
             <ProtectedRoute>
               <Progress />
+            </ProtectedRoute>
+          } />
+          <Route path="/practice" element={
+            <ProtectedRoute>
+              <Practice />
+            </ProtectedRoute>
+          } />
+          <Route path="/resources" element={
+            <ProtectedRoute>
+              <Resources />
+            </ProtectedRoute>
+          } />
+          <Route path="/ats-check" element={
+            <ProtectedRoute>
+              <ATSCheck />
             </ProtectedRoute>
           } />
           <Route path="/" element={<Navigate to="/login" />} />
