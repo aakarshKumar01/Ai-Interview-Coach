@@ -31,11 +31,10 @@ export const forgotPassword = async (req, res) => {
       })
     }
 
-    // 6-digit OTP generate karo
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
 
     user.resetOTP = otp
-    user.resetOTPExpiry = Date.now() + 10 * 60 * 1000 // 10 minutes
+    user.resetOTPExpiry = Date.now() + 10 * 60 * 1000
     await user.save()
 
     await sendOTPEmail(email, otp)
@@ -45,6 +44,7 @@ export const forgotPassword = async (req, res) => {
       message: 'OTP sent to your email',
     })
   } catch (error) {
+    console.error('Forgot password error:', error)
     res.status(500).json({
       success: false,
       message: error.message,
